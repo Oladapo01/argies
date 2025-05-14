@@ -1,0 +1,174 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cake-company-frontend
+  labels:
+    app: cake-company
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cake-company
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: cake-company
+        tier: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ${DOCKER_HUB_USERNAME}/cake-company:latest
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+          requests:
+            cpu: "0.2"
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        env:
+        - name: NODE_ENV
+          value: production
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cake-company-backend
+  labels:
+    app: cake-company
+    tier: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cake-company
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: cake-company
+        tier: backend
+    spec:
+      containers:
+      - name: backend
+        image: ${DOCKER_HUB_USERNAME}/cake-company-api:latest
+        ports:
+        - containerPort: 5000
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+          requests:
+            cpu: "0.2"
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        env:
+        - name: NODE_ENV
+          value: production
+        - name: STRIPE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cake-company-secrets
+              key: stripe-secret-key
+        - name: INSTAGRAM_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: cake-company-secrets
+              key: instagram-token
+        - name: GOOGLE_MAPS_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cake-company-secrets
+              key: google-maps-api-key
+        - name: EMAIL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: cake-company-secrets
+              key: email-host
+        - name: EMAIL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: cake-company-secrets
+              key: email-port
+        - name: EMAIL_USER
+          valueFrom:
+            secretKeyRef:
+              name: cake-company-secrets
+              key: email-user
+        - name: EMAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cake-company-secrets
+              key: email-password
+        - name: BUSINESS_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: cake-company-secrets
+              key: business-email
+        - name: REDIS_URL
+          value: "redis://cake-company-redis:6379"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cake-company-redis
+  labels:
+    app: cake-company
+    tier: cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cake-company
+      tier: cache
+  template:
+    metadata:
+      labels:
+        app: cake-company
+        tier: cache
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+        ports:
+        - containerPort: 6379
+        resources:
+          limits:
+            cpu: "0.2"
+            memory: "256Mi"
+          requests:
+            cpu: "0.1"
+            memory: "128Mi"
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-data-pvc
