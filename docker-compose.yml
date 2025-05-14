@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # Node.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    container_name: argies-app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/argies
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=7d
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_SECURE=${EMAIL_SECURE}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - BUSINESS_EMAIL=${BUSINESS_EMAIL}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - argies-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/api/health"] 
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB Service
+  mongo:
+    image: mongo:6.0
+    container_name: argies-mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_DATABASE=argies
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - argies-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nginx for serving frontend
+  nginx:
+    image: nginx:alpine
+    container_name: argies-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./build:/usr/share/nginx/html
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - argies-network
+    # Install wget for health checking
+    command: sh -c "apk add --no-cache wget && nginx -g 'daemon off;'"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  argies-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
