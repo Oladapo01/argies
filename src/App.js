@@ -55,7 +55,9 @@ function App() {
             <Contact />
           </section>
           <section ref={mapRef} id="location">
-            <Map />
+            <Map
+             tileServer={process.env.REACT_APP_TILE_SERVER}
+             attribution={process.env.REACT_APP_TILE_ATTRIBUTION}/>
           </section>
           <Footer />
         </div>

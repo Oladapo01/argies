@@ -1,8 +1,8 @@
 const theme = {
   colors: {
-    primary: '#d4a76a', // Gold
+    primary: 'rgb(227, 151, 199)', // Pink
     secondary: '#f8f9fa', // Light gray
-    accent: '#b38b59', // Darker gold
+    accent: '#e84c88', // Darker pink
     text: '#333',
     lightText: '#6c757d',
     white: '#ffffff',

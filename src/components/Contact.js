@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaWhatsapp } from 'react-icons/fa';
 import styled from 'styled-components';
 
 const ContactSection = styled.section`
@@ -19,7 +19,7 @@ const ContactInfo = styled.div`
   margin-bottom: 2rem;
   
   h3 {
-    color: #d4a76a;
+    color:rgb(227, 151, 199);
     margin-bottom: 1.5rem;
   }
   
@@ -30,7 +30,7 @@ const ContactInfo = styled.div`
     
     svg {
       margin-right: 1rem;
-      color: #d4a76a;
+      color:rgb(227, 151, 199);
       margin-top: 0.25rem;
     }
   }
@@ -46,20 +46,37 @@ const ContactForm = styled(Form)`
     padding: 0.75rem;
     margin-bottom: 1.5rem;
     border: 1px solid #eee;
+    width: 100%;
     
     &:focus {
-      border-color: #d4a76a;
-      box-shadow: 0 0 0 0.25rem rgba(212, 167, 106, 0.25);
+      border-color:rgb(227, 151, 199);
+      box-shadow: 0 0 0 0.25rem rgb(227, 151, 199);
     }
   }
   
   textarea.form-control {
     min-height: 150px;
+    resize: vertical;
+  }
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  
+  .row {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+  }
+  
+  [class*="col-"] {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
 `;
 
 const SubmitButton = styled(Button)`
-  background-color: #d4a76a;
+  background-color:rgb(227, 151, 199);
   border: none;
   padding: 0.75rem 2rem;
   font-weight: 600;
@@ -68,7 +85,7 @@ const SubmitButton = styled(Button)`
   transition: all 0.3s ease;
   
   &:hover, &:focus {
-    background-color: #c0955d;
+    background-color:rgb(227, 151, 199);
     transform: translateY(-2px);
   }
 `;
@@ -138,15 +155,24 @@ const Contact = () => {
               <h3>Contact Information</h3>
               <p>
                 <FaMapMarkerAlt />
-                <span>123 Bakery Street, Sweetville, XY 12345</span>
+                <span>94 Percy Road, Southampton. SO16 4LN</span>
               </p>
               <p>
-                <FaPhone />
-                <span>+1 (555) 123-4567</span>
+                <FaWhatsapp />
+                  <span>
+                    <a 
+                      href="https://wa.me/447411938696"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: 'inherit', textDecoration: 'none' }}
+                    >
+                      07411938696
+                    </a>
+                  </span>
               </p>
               <p>
                 <FaEnvelope />
-                <span>info@argiesbakery.com</span>
+                <span>info@argiescakes.co.uk</span>
               </p>
               <p>
                 <strong>Business Hours:</strong><br />
