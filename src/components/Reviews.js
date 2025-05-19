@@ -208,7 +208,7 @@ const Reviews = () => {
         setLoading(true);
         // In a production environment, this would call your backend API
         const response = await axios.get('/api/google-reviews');
-        setReviews(response.data.reviews);
+        setReviews(response.data.reviews || []);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching Google reviews:", err);
@@ -281,7 +281,7 @@ const Reviews = () => {
         </ReviewsSubtitle>
         
         <ReviewsWrapper>
-          {reviews.slice(0, visibleReviews).map((review, index) => (
+          {(reviews || []).slice(0, visibleReviews).map((review, index) => (
             <ReviewCard
               key={review.id}
               initial={{ opacity: 0, y: 20 }}

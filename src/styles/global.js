@@ -1,10 +1,9 @@
 import { createGlobalStyle } from 'styled-components';
+import 'leaflet/dist/leaflet.css';
 
 export const GlobalStyles = createGlobalStyle`
-  /* Google Fonts */
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
-  /* Reset and base styles */
   * {
     margin: 0;
     padding: 0;
@@ -60,7 +59,6 @@ export const GlobalStyles = createGlobalStyle`
     color: ${({ theme }) => theme.colors.primary};
     text-decoration: none;
     transition: ${({ theme }) => theme.transitions.default};
-    
     &:hover {
       color: ${({ theme }) => theme.colors.accent};
     }
@@ -88,7 +86,6 @@ export const GlobalStyles = createGlobalStyle`
     background: none;
   }
 
-  /* Utility classes */
   .container {
     width: 100%;
     max-width: 1200px;
@@ -112,7 +109,6 @@ export const GlobalStyles = createGlobalStyle`
     border: 0;
   }
 
-  /* Animations */
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -120,5 +116,11 @@ export const GlobalStyles = createGlobalStyle`
 
   .fade-in {
     animation: fadeIn 0.5s ease-in;
+  }
+
+  .leaflet-container {
+    height: 100% !important;
+    width: 100% !important;
+    z-index: 0;
   }
 `;

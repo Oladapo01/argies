@@ -173,7 +173,7 @@ const Menu = () => {
     triggerOnce: true,
     threshold: 0.1
   });
-  const { addToCart, cart, total } = useCart();
+  const { addToCart, cart = [], total = 0 } = useCart() || {};
 
   const filteredItems = category === 'all' 
     ? cakeItems || []
@@ -239,7 +239,7 @@ const Menu = () => {
           ))}
         </MenuGrid>
 
-        {cart.length > 0 && (
+        {cart && cart.length > 0 && (
           <CartSection>
             <h3>Your Order</h3>
             <ul>

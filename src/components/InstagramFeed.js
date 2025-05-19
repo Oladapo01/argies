@@ -105,7 +105,7 @@ const InstagramFeed = () => {
         const response = await axios.get('/api/instagram-feed');
         
         // Get the first 8 most recent posts
-        const recentPosts = response.data.data.slice(0, 8);
+        const recentPosts = response.data?.data?.slice(0, 8) || [];
         setPosts(recentPosts);
         setLoading(false);
       } catch (err) {

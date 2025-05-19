@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import { FaFacebook, FaInstagram, FaTwitter, FaYelp } from 'react-icons/fa';
+import { FaFacebook, FaInstagram,  FaYelp, FaGoogle } from 'react-icons/fa';
+import { SiThreads } from "react-icons/si";
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -77,17 +78,20 @@ const Footer = () => {
               Made with love and the finest ingredients.
             </FooterText>
             <SocialIcons>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.facebook.com/argiescakes/" target="_blank" rel="noopener noreferrer">
                 <FaFacebook />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.instagram.com/argiescakes/" target="_blank" rel="noopener noreferrer">
                 <FaInstagram />
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                <FaTwitter />
+              <a href="https://www.threads.com/@argiescakes" target="_blank" rel="noopener noreferrer">
+                <SiThreads />
               </a>
               <a href="https://yelp.com" target="_blank" rel="noopener noreferrer">
                 <FaYelp />
+              </a>
+              <a href="https://g.co/kgs/oChzGT8" target="_blank" rel="noopener noreferrer">
+                <FaGoogle />
               </a>
             </SocialIcons>
           </Col>
@@ -113,11 +117,11 @@ const Footer = () => {
           <Col md={4} lg={3}>
             <FooterTitle>Contact Us</FooterTitle>
             <FooterText>
-              123 Bakery Street<br />
-              Sweetville, XY 12345<br />
+              94 Percy Road<br />
+              Southampton, SO16 4LN<br />
               <br />
-              Phone: (555) 123-4567<br />
-              Email: info@argiesbakery.com
+              Phone: 07411938696<br />
+              Email: info@argiescakes.co.uk
             </FooterText>
           </Col>
         </Row>
