@@ -11,6 +11,7 @@ require('dotenv').config();
 // Import routes
 const bookingRoutes = require('./booking/bookingRoutes');
 const authRoutes = require('./auth/authRoutes');
+const orderRoutes = require('./order/orderRoutes');
 
 // Create Express app
 const app = express();
@@ -84,6 +85,7 @@ const configureExpress = () => {
   // API Routes
   app.use('/api/bookings', bookingRoutes);
   app.use('/api/auth', authRoutes);
+  app.use('/api/orders', orderRoutes);
 
   // Health check endpoint
   app.get('/api/health', (req, res) => res.json({ 

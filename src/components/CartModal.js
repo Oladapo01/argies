@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useTheme } from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 import { FaTimes, FaPlus, FaMinus, FaTrash } from 'react-icons/fa';
 
 const ModalOverlay = styled(motion.div)`
@@ -174,6 +175,7 @@ const CheckoutButton = styled.button`
 const CartModal = ({ isOpen, onClose }) => {
   const { items, updateQuantity, removeFromCart, cartTotal } = useCart();
   const theme = useTheme();
+  const navigate = useNavigate();
   
   return (
     <AnimatePresence>
@@ -233,8 +235,11 @@ const CartModal = ({ isOpen, onClose }) => {
                   <span>Total:</span>
                   <span>£{cartTotal.toFixed(2)}</span>
                 </div>
-                <CheckoutButton>
-                  Checkout
+                <CheckoutButton onClick={() => {
+                    onClose(); // Close the modal
+                    navigate('/checkout'); // Navigate to checkout page
+                }}>
+                    Proceed to Checkout
                 </CheckoutButton>
               </CartFooter>
             )}
