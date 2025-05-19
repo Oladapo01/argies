@@ -15,7 +15,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-const position = [50.9309, -1.4355]; // 94 Percy Road, Southampton, SO16 4LN
+const position = [50.92359350286674, -1.4435661210324027]; // 94 Percy Road, Southampton, SO16 4LN
 
 const Map = ({ tileServer, attribution }) => {
   const tileUrl = tileServer || 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';

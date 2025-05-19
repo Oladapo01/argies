@@ -32,6 +32,7 @@
     ]
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.20.6",
     "@stripe/react-stripe-js": "^2.9.0",
     "@stripe/stripe-js": "^1.54.2",
     "@testing-library/jest-dom": "^5.16.5",

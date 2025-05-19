@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useTheme } from 'styled-components'
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import StripeCheckout from './StripeCheckout';
@@ -114,6 +115,34 @@ const CartSection = styled.div`
   border-radius: 10px;
   margin-top: 3rem;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  
+  h3 {
+    color: ${({ theme }) => theme.colors.primary};
+    margin-bottom: 1rem;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1rem;
+    
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+      
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+  
+  p {
+    font-weight: bold;
+    text-align: right;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const cakeItems = [
@@ -168,6 +197,7 @@ const cakeItems = [
 ];
 
 const Menu = () => {
+  const theme = useTheme();
   const [category, setCategory] = useState('all');
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -229,9 +259,22 @@ const Menu = () => {
               <MenuItemImage src={item.image} alt={item.name} />
               <MenuItemContent>
                 <MenuItemTitle>{item.name}</MenuItemTitle>
-                <MenuItemPrice>${item.price.toFixed(2)}</MenuItemPrice>
+                <MenuItemPrice>£{item.price.toFixed(2)}</MenuItemPrice>
                 <MenuItemDescription>{item.description}</MenuItemDescription>
-                <AddToCartButton onClick={() => addToCart(item)}>
+                <AddToCartButton onClick={() => {
+                  addToCart(item);
+                  
+                  // Add visual feedback
+                  const button = document.activeElement;
+                  const originalText = button.innerText;
+                  button.innerText = 'Added!';
+                  button.style.backgroundColor = theme.colors.accent;
+                  
+                  setTimeout(() => {
+                    button.innerText = originalText;
+                    button.style.backgroundColor = theme.colors.primary;
+                  }, 1000);
+                }}>
                   Add to Cart
                 </AddToCartButton>
               </MenuItemContent>
@@ -245,11 +288,11 @@ const Menu = () => {
             <ul>
               {cart.map(item => (
                 <li key={item.id}>
-                  {item.name} x {item.quantity} - ${(item.price * item.quantity).toFixed(2)}
+                  {item.name} x {item.quantity} - £{(item.price * item.quantity).toFixed(2)}
                 </li>
               ))}
             </ul>
-            <p>Total: ${total.toFixed(2)}</p>
+            <p>Total: £{total.toFixed(2)}</p>
             <StripeCheckout total={total} />
           </CartSection>
         )}

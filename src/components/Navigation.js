@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useTheme } from 'styled-components';
 import { motion } from 'framer-motion';
 import Logo from './Logo';
+import { useCart } from '../context/CartContext';
+import { CiShoppingCart } from "react-icons/ci";
+import CartModal from './CartModal'; 
 
 const Nav = styled.nav`
   position: fixed;
@@ -60,6 +64,10 @@ const MobileMenuButton = styled.button`
 const Navigation = ({ sections }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cartModalOpen, setCartModalOpen] = useState(false);
+  const { items = [] } = useCart() || {};
+  const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+  const theme = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,46 +88,76 @@ const Navigation = ({ sections }) => {
   };
 
   return (
-    <Nav scrolled={scrolled}>
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <Logo onClick={scrollToTop} />
-      </motion.div>
-      
-      <MobileMenuButton onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-        {mobileMenuOpen ? '✕' : '☰'}
-      </MobileMenuButton>
-      
-      <NavLinks mobileMenuOpen={mobileMenuOpen}>
-        <NavLink 
-          whileHover={{ scale: 1.05 }}
-          onClick={() => scrollToSection(sections.menu)}
+    <>
+      <Nav scrolled={scrolled}>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          Menu
-        </NavLink>
-        <NavLink 
-          whileHover={{ scale: 1.05 }}
-          onClick={() => scrollToSection(sections.gallery)}
-        >
-          Gallery
-        </NavLink>
-        <NavLink 
-          whileHover={{ scale: 1.05 }}
-          onClick={() => scrollToSection(sections.contact)}
-        >
-          Contact
-        </NavLink>
-        <NavLink 
-          whileHover={{ scale: 1.05 }}
-          onClick={() => scrollToSection(sections.location)}
-        >
-          Location
-        </NavLink>
-      </NavLinks>
-    </Nav>
+          <Logo onClick={scrollToTop} />
+        </motion.div>
+        
+        <MobileMenuButton onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          {mobileMenuOpen ? '✕' : '☰'}
+        </MobileMenuButton>
+        
+        <NavLinks mobileMenuOpen={mobileMenuOpen}>
+          <NavLink 
+            whileHover={{ scale: 1.05 }}
+            onClick={() => scrollToSection(sections.menu)}
+          >
+            Menu
+          </NavLink>
+          <NavLink 
+            whileHover={{ scale: 1.05 }}
+            onClick={() => scrollToSection(sections.gallery)}
+          >
+            Gallery
+          </NavLink>
+          <NavLink 
+            whileHover={{ scale: 1.05 }}
+            onClick={() => scrollToSection(sections.contact)}
+          >
+            Contact
+          </NavLink>
+          <NavLink 
+            whileHover={{ scale: 1.05 }}
+            onClick={() => scrollToSection(sections.location)}
+          >
+            Location
+          </NavLink>
+          <NavLink 
+            whileHover={{ scale: 1.05 }}
+            onClick={(e) => {
+              e.preventDefault();
+              setCartModalOpen(true); // Open cart modal instead of scrolling
+            }}
+            style={{ display: 'flex', alignItems: 'center' }}
+          >
+            <CiShoppingCart style={{ marginRight: '5px' }} />
+            Cart {itemCount > 0 && <span style={{ 
+              backgroundColor: theme.colors.primary, 
+              color: 'white', 
+              borderRadius: '50%', 
+              width: '20px', 
+              height: '20px', 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              marginLeft: '5px',
+              fontSize: '0.8rem'
+            }}>{itemCount}</span>}
+          </NavLink>
+        </NavLinks>
+      </Nav>
+
+    {/* Add the cart modal */}
+    <CartModal 
+      isOpen={cartModalOpen} 
+      onClose={() => setCartModalOpen(false)} 
+    />
+  </>
   );
 };
 
