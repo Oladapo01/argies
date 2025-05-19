@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaWhatsapp } from 'react-icons/fa';
+import { FaEnvelope, FaMapMarkerAlt, FaWhatsapp } from 'react-icons/fa';
 import styled from 'styled-components';
 
 const ContactSection = styled.section`
