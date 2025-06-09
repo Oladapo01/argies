@@ -137,5 +137,3 @@ For custom orders or issues, email: [hello@argiescakes.com](mailto:hello@argiesc
 ## ✅ License
 
 MIT © 2025 Argies Cakes
-
-```
