@@ -1,0 +1,398 @@
+[
+  {
+    "id": 1,
+    "category": "pastries",
+    "name": "Focaccia (Olives)",
+    "price": 2.99,
+    "image": "",
+    "description": "A classic Italian flatbread, light and airy, topped with savory Kalamata olives and a sprinkle of sea salt.",
+    "dietary": ["vegan", "dairy-free"]
+  },
+  {
+    "id": 2,
+    "category": "pastries",
+    "name": "Focaccia (Cherry Tomatoes)",
+    "price": 2.99,
+    "image": "",
+    "description": "A classic Italian flatbread, light and airy, topped with sweet cherry tomatoes, fresh rosemary, and a drizzle of olive oil.",
+    "dietary": ["vegan", "dairy-free"]
+  },
+  {
+    "id": 3,
+    "category": "pastries",
+    "name": "Cudduruni (Sicilian Stuff)",
+    "price": 3.99,
+    "image": "",
+    "description": "A traditional Sicilian stuffed bread, filled with a savory mixture of onions, anchovies, and seasonal vegetables.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 4,
+    "category": "pastries",
+    "name": "Spinach and Ricotta Roll",
+    "price": 3.49,
+    "image": "",
+    "description": "Flaky pastry rolled with a creamy filling of fresh spinach and soft ricotta cheese, seasoned to perfection.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 5,
+    "category": "pastries",
+    "name": "Sausage Roll (Italian Inspired)",
+    "price": 3.99,
+    "image": "",
+    "description": "A savory roll filled with high-quality Italian sausage, fennel, and herbs, wrapped in a buttery puff pastry.",
+    "dietary": []
+  },
+  {
+    "id": 6,
+    "category": "pastries",
+    "name": "Sausage Roll (Classic)",
+    "price": 3.49,
+    "image": "",
+    "description": "A British classic featuring seasoned sausage meat wrapped in a golden, flaky puff pastry.",
+    "dietary": []
+  },
+  {
+    "id": 7,
+    "category": "pastries",
+    "name": "Sausage Roll (Pork)",
+    "price": 3.49,
+    "image": "",
+    "description": "A hearty roll filled with seasoned ground pork, wrapped in a delicious, flaky pastry.",
+    "dietary": []
+  },
+  {
+    "id": 8,
+    "category": "pastries",
+    "name": "Sausage Roll (Apple)",
+    "price": 3.49,
+    "image": "",
+    "description": "A delightful twist on the classic, combining savory pork sausage with sweet chunks of apple in a flaky pastry.",
+    "dietary": []
+  },
+  {
+    "id": 9,
+    "category": "pastries",
+    "name": "Millionaire Shortbread",
+    "price": 2.49,
+    "image": "",
+    "description": "A decadent treat with a buttery shortbread base, a rich caramel layer, and topped with smooth milk chocolate.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 10,
+    "category": "pastries",
+    "name": "Apple Pie Slice",
+    "price": 2.99,
+    "image": "",
+    "description": "A comforting slice of classic apple pie, with a tender, flaky crust and a sweet, spiced apple filling.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 11,
+    "category": "pastries",
+    "name": "Bakewell Tart",
+    "price": 2.99,
+    "image": "",
+    "description": "A traditional English tart with a shortcrust pastry case, a layer of raspberry jam, frangipane, and topped with flaked almonds.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 12,
+    "category": "pastries",
+    "name": "Lemon Tart (Pickup Only)",
+    "price": 2.99,
+    "image": "",
+    "description": "A zesty and refreshing tart with a crisp pastry shell and a smooth, tangy lemon curd filling. Available for pickup only.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 13,
+    "category": "pastries",
+    "name": "Sticky Toffee",
+    "price": 2.99,
+    "image": "",
+    "description": "A moist toffee-flavored sponge pudding, drizzled with a rich, warm toffee sauce.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 14,
+    "category": "sourdough",
+    "name": "Plain White Sourdough",
+    "price": 3.49,
+    "image": "",
+    "description": "Artisan, naturally-leavened white sourdough with a wonderfully chewy crumb and a crisp, golden crust.",
+    "dietary": ["vegan", "dairy-free"]
+  },
+  {
+    "id": 15,
+    "category": "sourdough",
+    "name": "Granary Sourdough",
+    "price": 3.49,
+    "image": "",
+    "description": "A wholesome, naturally-leavened sourdough bread made with a blend of malted grains for a nutty flavor and hearty texture.",
+    "dietary": ["vegan", "dairy-free"]
+  },
+  {
+    "id": 16,
+    "category": "sourdough",
+    "name": "Olive Sourdough",
+    "price": 3.99,
+    "image": "",
+    "description": "Our classic sourdough loaf studded with savory Kalamata olives for a burst of Mediterranean flavor.",
+    "dietary": ["vegan", "dairy-free"]
+  },
+  {
+    "id": 17,
+    "category": "brownies",
+    "name": "Nutella Brownie",
+    "price": 2.49,
+    "image": "",
+    "description": "An indulgent chocolate brownie with a gooey center, generously swirled with creamy Nutella.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 18,
+    "category": "brownies",
+    "name": "Biscoff Brownie",
+    "price": 2.49,
+    "image": "",
+    "description": "A rich, fudgy brownie swirled with Lotus Biscoff spread and topped with a crunchy Biscoff biscuit.",
+    "dietary": ["vegan", "dairy-free"]
+  },
+  {
+    "id": 19,
+    "category": "brownies",
+    "name": "Dark Chocolate Brownie",
+    "price": 2.49,
+    "image": "",
+    "description": "A intensely rich and fudgy brownie made with premium dark chocolate for a deep cocoa flavor.",
+    "dietary": ["vegan", "dairy-free"]
+  },
+  {
+    "id": 20,
+    "category": "brownies",
+    "name": "Kinder Bueno Brownie",
+    "price": 2.49,
+    "image": "",
+    "description": "A decadent brownie loaded with chunks of Kinder Bueno and a creamy hazelnut center.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 21,
+    "category": "brownies",
+    "name": "Oreo Brownie",
+    "price": 2.49,
+    "image": "",
+    "description": "A crowd-pleasing brownie packed with crushed Oreo cookies for a perfect chocolate and cream crunch.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 22,
+    "category": "brownies",
+    "name": "Ferrero Brownie",
+    "price": 2.49,
+    "image": "",
+    "description": "A luxurious brownie with a whole Ferrero Rocher baked in the center, combining chocolate, hazelnut, and wafer.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 23,
+    "category": "brownies",
+    "name": "Double Chocolate Brownie",
+    "price": 2.49,
+    "image": "",
+    "description": "The ultimate treat for chocolate lovers, a fudgy brownie packed with both milk and dark chocolate chips.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 24,
+    "category": "brownies",
+    "name": "Chocolate Orange Brownie",
+    "price": 2.49,
+    "image": "",
+    "description": "A zesty and rich brownie infused with natural orange flavor and packed with chocolate chunks.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 25,
+    "category": "brownies",
+    "name": "Salted Caramel Brownie",
+    "price": 2.49,
+    "image": "",
+    "description": "A perfect balance of sweet and salty, this fudgy brownie is swirled with rich, gooey salted caramel.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 26,
+    "category": "cakes",
+    "name": "Coconut Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A light and moist coconut sponge cake, layered with creamy coconut frosting and topped with toasted coconut flakes.",
+    "dietary": ["vegan", "dairy-free"]
+  },
+  {
+    "id": 27,
+    "category": "cakes",
+    "name": "Strawberry Cream Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A delicate vanilla sponge layered with fresh whipped cream and sweet, juicy strawberries.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 28,
+    "category": "cakes",
+    "name": "Cookies & Cream Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A delicious cake featuring layers of chocolate sponge and a cream cheese frosting packed with crushed chocolate cookies.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 29,
+    "category": "cakes",
+    "name": "Carrot Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A classic, moist carrot cake packed with grated carrots, walnuts, and spices, topped with a rich cream cheese frosting.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 30,
+    "category": "cakes",
+    "name": "Strawberry Cheesecake",
+    "price": 28.99,
+    "image": "",
+    "description": "A creamy, smooth New York-style cheesecake on a biscuit base, topped with a fresh strawberry glaze.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 31,
+    "category": "cakes",
+    "name": "Vanilla Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A timeless classic. A light and fluffy vanilla bean sponge layered with a smooth vanilla buttercream.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 32,
+    "category": "cakes",
+    "name": "Lemon & Blueberry Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A zesty lemon sponge cake dotted with juicy blueberries, finished with a tangy lemon cream cheese frosting.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 33,
+    "category": "cakes",
+    "name": "Coffee Walnut Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A classic combination of rich coffee-infused sponge, crunchy walnuts, and a smooth coffee buttercream.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 34,
+    "category": "cakes",
+    "name": "Coffee Caramel Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "An irresistible cake with layers of coffee-flavored sponge and a sweet, gooey caramel filling and frosting.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 35,
+    "category": "cakes",
+    "name": "Tiramisu",
+    "price": 28.99,
+    "image": "",
+    "description": "A classic Italian dessert featuring layers of coffee-soaked ladyfingers and a rich, creamy mascarpone mixture.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 36,
+    "category": "cakes",
+    "name": "Tres Leches Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A light sponge cake soaked in a sweet mixture of three different milks, topped with whipped cream.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 37,
+    "category": "cakes",
+    "name": "Milk Chocolate Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A moist and decadent chocolate cake layered with a silky, smooth milk chocolate ganache.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 38,
+    "category": "cakes",
+    "name": "Dark Chocolate Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "An intensely rich and moist dark chocolate cake with a deep cocoa flavor, perfect for true chocoholics.",
+    "dietary": ["vegan", "dairy-free"]
+  },
+  {
+    "id": 39,
+    "category": "cakes",
+    "name": "Red Velvet Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A striking cake with a mild cocoa flavor and a vibrant red hue, complemented by a classic cream cheese frosting.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 40,
+    "category": "cakes",
+    "name": "Classic Victoria Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A quintessentially British cake with a light vanilla sponge, filled with strawberry jam and fresh whipped cream.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 41,
+    "category": "cakes",
+    "name": "Lemon Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A bright and zesty lemon sponge cake, drizzled with a tangy lemon glaze for an extra citrus kick.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 42,
+    "category": "cakes",
+    "name": "Lemon & Raspberry Cake",
+    "price": 28.99,
+    "image": "",
+    "description": "A delightful cake combining the tang of lemon with the sweetness of raspberries in a light, fluffy sponge.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 43,
+    "category": "others",
+    "name": "Scones",
+    "price": 2.99,
+    "image": "",
+    "description": "A pair of classic British scones, light and fluffy, perfect with clotted cream and jam.",
+    "dietary": ["vegetarian"]
+  },
+  {
+    "id": 44,
+    "category": "others",
+    "name": "Afternoon Tea",
+    "price": 15.00,
+    "image": "",
+    "description": "A traditional selection of delicate finger sandwiches, freshly baked scones with cream and jam, and a variety of miniature cakes and pastries.",
+    "dietary": ["vegetarian"]
+  }
+]

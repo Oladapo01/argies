@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
@@ -36,7 +36,7 @@ const ModalHeader = styled.div`
   align-items: center;
   padding: 1rem;
   border-bottom: 1px solid #eee;
-  
+
   h2 {
     margin: 0;
     color: ${({ theme }) => theme.colors.primary};
@@ -50,7 +50,7 @@ const CloseButton = styled.button`
   font-size: 1.5rem;
   cursor: pointer;
   color: #999;
-  
+
   &:hover {
     color: ${({ theme }) => theme.colors.primary};
   }
@@ -58,7 +58,7 @@ const CloseButton = styled.button`
 
 const CartItems = styled.div`
   padding: 1rem;
-  
+
   p.empty {
     text-align: center;
     padding: 2rem;
@@ -66,12 +66,22 @@ const CartItems = styled.div`
   }
 `;
 
+const CancellationNotice = styled.div`
+  background: #fff8e1;
+  color: #5c4400;
+  border: 1px solid #ffe082;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 1rem;
+  font-size: 0.85rem;
+`;
+
 const CartItem = styled.div`
   display: flex;
   margin-bottom: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid #eee;
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -83,7 +93,7 @@ const ItemImage = styled.div`
   border-radius: 4px;
   overflow: hidden;
   margin-right: 1rem;
-  
+
   img {
     width: 100%;
     height: 100%;
@@ -93,14 +103,22 @@ const ItemImage = styled.div`
 
 const ItemDetails = styled.div`
   flex: 1;
-  
+
   h4 {
     margin: 0 0 0.5rem;
+    font-size: 1rem;
   }
-  
+
   .price {
     color: ${({ theme }) => theme.colors.primary};
     font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  
+  .size-info {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.5rem;
   }
 `;
 
@@ -108,7 +126,7 @@ const ItemControls = styled.div`
   display: flex;
   align-items: center;
   margin-top: 0.5rem;
-  
+
   button {
     background: ${({ theme }) => theme.colors.primary};
     color: white;
@@ -120,12 +138,12 @@ const ItemControls = styled.div`
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    
+
     &:hover {
       background: ${({ theme }) => theme.colors.accent};
     }
   }
-  
+
   span {
     margin: 0 0.5rem;
     min-width: 30px;
@@ -139,7 +157,7 @@ const RemoveButton = styled.button`
   color: #999;
   cursor: pointer;
   margin-left: 1rem;
-  
+
   &:hover {
     color: ${({ theme }) => theme.colors.accent};
   }
@@ -148,7 +166,7 @@ const RemoveButton = styled.button`
 const CartFooter = styled.div`
   padding: 1rem;
   border-top: 1px solid #eee;
-  
+
   .total {
     display: flex;
     justify-content: space-between;
@@ -166,17 +184,43 @@ const CheckoutButton = styled.button`
   border-radius: 25px;
   font-weight: 500;
   cursor: pointer;
-  
+
   &:hover {
     background: ${({ theme }) => theme.colors.accent};
   }
 `;
 
 const CartModal = ({ isOpen, onClose }) => {
+  console.log('🖼️ CartModal render - isOpen:', isOpen);
+  
   const { items, updateQuantity, removeFromCart, cartTotal } = useCart();
+  console.log('🛒 CartModal - items from context:', items);
+  
   const theme = useTheme();
   const navigate = useNavigate();
-  
+
+  // Function to extract original cake name (without size info)
+  const getOriginalCakeName = (name) => {
+    // If it contains a size in parentheses, remove it
+    const match = name.match(/^(.*?)\s*\([^)]*\)$/);
+    return match ? match[1] : name;
+  };
+
+  // Function to extract size info from name
+  const getSizeInfo = (item) => {
+    if (item.size && item.serves) {
+      return `${item.size} - ${item.serves}`;
+    }
+    // Fallback: extract from name if size/serves not available
+    const match = item.name.match(/\(([^)]*)\)$/);
+    return match ? match[1] : null;
+  };
+
+  // Function to check if item is a cake (has size info)
+  const isCake = (item) => {
+    return item.size || item.name.includes('(') && item.name.includes('inch');
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -198,7 +242,11 @@ const CartModal = ({ isOpen, onClose }) => {
                 <FaTimes />
               </CloseButton>
             </ModalHeader>
-            
+
+            <CancellationNotice>
+              <strong>Cancellation Policy:</strong> All deposits are non-refundable unless cancellation is made at least <strong>36 hours</strong> prior to the scheduled pickup or delivery.
+            </CancellationNotice>
+
             <CartItems>
               {items.length === 0 ? (
                 <p className="empty">Your cart is empty</p>
@@ -206,11 +254,16 @@ const CartModal = ({ isOpen, onClose }) => {
                 items.map(item => (
                   <CartItem key={item.id}>
                     <ItemImage>
-                      <img src={item.image} alt={item.name} />
+                      <img src={item.image || '/placeholder.jpg'} alt={getOriginalCakeName(item.name)} />
                     </ItemImage>
                     <ItemDetails>
-                      <h4>{item.name}</h4>
+                      <h4>{isCake(item) ? getOriginalCakeName(item.name) : item.name}</h4>
                       <div className="price">£{item.price.toFixed(2)}</div>
+                      {isCake(item) && getSizeInfo(item) && (
+                        <div className="size-info">
+                          Size: {getSizeInfo(item)}
+                        </div>
+                      )}
                       <ItemControls>
                         <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>
                           <FaMinus size={12} />
@@ -228,7 +281,7 @@ const CartModal = ({ isOpen, onClose }) => {
                 ))
               )}
             </CartItems>
-            
+
             {items.length > 0 && (
               <CartFooter>
                 <div className="total">
@@ -236,10 +289,12 @@ const CartModal = ({ isOpen, onClose }) => {
                   <span>£{cartTotal.toFixed(2)}</span>
                 </div>
                 <CheckoutButton onClick={() => {
-                    onClose(); // Close the modal
-                    navigate('/checkout'); // Navigate to checkout page
+                  if (items.length > 0) {
+                    onClose();
+                    navigate('/checkout');
+                  }
                 }}>
-                    Proceed to Checkout
+                  Proceed to Checkout
                 </CheckoutButton>
               </CartFooter>
             )}

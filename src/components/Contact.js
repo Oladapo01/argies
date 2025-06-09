@@ -148,7 +148,7 @@ const Contact = () => {
   return (
     <ContactSection id="contact">
       <Container>
-        <SectionTitle>Get In Touch</SectionTitle>
+        <SectionTitle>Request a Quote</SectionTitle>
         <Row>
           <Col lg={5} className="mb-4 mb-lg-0">
             <ContactInfo>

@@ -6,12 +6,14 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+const axios = require('axios');
 require('dotenv').config();
 
 // Import routes
 const bookingRoutes = require('./booking/bookingRoutes');
 const authRoutes = require('./auth/authRoutes');
 const orderRoutes = require('./order/orderRoutes');
+const reviewRoutes = require('./reviews/reviewRoutes'); // Add this line
 
 // Create Express app
 const app = express();
@@ -53,11 +55,11 @@ const configureExpress = () => {
       directives: {
         defaultSrc: ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com", "https://www.paypal.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
-        imgSrc: ["'self'", "data:", "https://placeholder-image.com", "https://*.cdninstagram.com", "https://*.tile.openstreetmap.org"],
-        connectSrc: ["'self'", "https://api.stripe.com", "https://*.tile.openstreetmap.org"],
-        frameSrc: ["'self'", "https://js.stripe.com"]
+        imgSrc: ["'self'", "data:", "https://placeholder-image.com", "https://*.cdninstagram.com", "https://*.tile.openstreetmap.org", "https://lh3.googleusercontent.com"],
+        connectSrc: ["'self'", "https://api.stripe.com", "https://*.tile.openstreetmap.org", "https://www.paypal.com", "https://maps.googleapis.com"],
+        frameSrc: ["'self'", "https://js.stripe.com", "https://www.paypal.com"]
       }
     },
     crossOriginEmbedderPolicy: false
@@ -86,6 +88,7 @@ const configureExpress = () => {
   app.use('/api/bookings', bookingRoutes);
   app.use('/api/auth', authRoutes);
   app.use('/api/orders', orderRoutes);
+  app.use('/api', reviewRoutes); // Add this line
 
   // Health check endpoint
   app.get('/api/health', (req, res) => res.json({ 
@@ -132,6 +135,15 @@ const startServer = async () => {
     console.log('Scheduled tasks loaded');
   } catch (error) {
     console.log('No scheduled tasks found or error loading them:', error.message);
+  }
+  
+  // Start review scheduler
+  try {
+    const reviewScheduler = require('./utils/reviewScheduler');
+    reviewScheduler.start();
+    console.log('Review scheduler started');
+  } catch (error) {
+    console.error('Error starting review scheduler:', error.message);
   }
   
   // Start the server

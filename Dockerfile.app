@@ -9,8 +9,8 @@ COPY package*.json ./
 # Install fixed versions of problematic packages first
 RUN npm install ajv@8.11.0 ajv-keywords@5.1.0 --save-exact --no-package-lock
 
-# Install Stripe dependencies explicitly
-RUN npm install @stripe/react-stripe-js @stripe/stripe-js --save
+# Install axios
+RUN npm install axios
 
 # Install rest of the dependencies with legacy peer deps
 RUN npm install --legacy-peer-deps

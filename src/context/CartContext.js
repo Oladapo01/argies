@@ -3,15 +3,18 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 const CartContext = createContext();
 
 const cartReducer = (state, action) => {
-  console.log('Cart action:', action.type, action.payload); // Add logging
+  console.log('🛒 Cart action:', action.type, action.payload);
   
   switch (action.type) {
     case 'LOAD_CART':
+      console.log('📥 Loading cart:', action.payload);
       return { ...state, items: action.payload };
       
     case 'ADD_ITEM':
+      console.log('➕ Adding item:', action.payload);
       const existingItem = state.items.find(item => item.id === action.payload.id);
       if (existingItem) {
+        console.log('📦 Item exists, updating quantity');
         return {
           ...state,
           items: state.items.map(item =>
@@ -21,18 +24,21 @@ const cartReducer = (state, action) => {
           ),
         };
       }
+      console.log('🆕 New item, adding to cart');
       return {
         ...state,
         items: [...state.items, { ...action.payload, quantity: 1 }],
       };
     
     case 'REMOVE_ITEM':
+      console.log('🗑️ Removing item:', action.payload.id);
       return {
         ...state,
         items: state.items.filter(item => item.id !== action.payload.id),
       };
     
     case 'UPDATE_QUANTITY':
+      console.log('🔢 Updating quantity:', action.payload);
       return {
         ...state,
         items: state.items.map(item =>
@@ -43,9 +49,11 @@ const cartReducer = (state, action) => {
       };
     
     case 'CLEAR_CART':
+      console.log('🧹 Clearing cart');
       return { ...state, items: [] };
     
     default:
+      console.log('❓ Unknown action:', action.type);
       return state;
   }
 };
@@ -61,13 +69,17 @@ export const CartProvider = ({ children }) => {
     try {
       if (typeof window !== 'undefined') {
         const savedCart = localStorage.getItem('cart');
-        console.log('Loading cart from localStorage:', savedCart); // Add logging
+        console.log('💾 Loading cart from localStorage:', savedCart);
         if (savedCart) {
-          dispatch({ type: 'LOAD_CART', payload: JSON.parse(savedCart) });
+          const parsedCart = JSON.parse(savedCart);
+          console.log('📋 Parsed cart:', parsedCart);
+          dispatch({ type: 'LOAD_CART', payload: parsedCart });
+        } else {
+          console.log('📭 No saved cart found');
         }
       }
     } catch (error) {
-      console.error('Error loading cart from localStorage:', error);
+      console.error('❌ Error loading cart from localStorage:', error);
     }
   }, []);
 
@@ -75,28 +87,39 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     try {
       if (typeof window !== 'undefined') {
-        console.log('Saving cart to localStorage:', state.items); // Add logging
+        console.log('💾 Saving cart to localStorage. Items count:', state.items.length);
+        console.log('💾 Items:', state.items);
         localStorage.setItem('cart', JSON.stringify(state.items));
       }
     } catch (error) {
-      console.error('Error saving cart to localStorage:', error);
+      console.error('❌ Error saving cart to localStorage:', error);
     }
   }, [state.items]);
 
   const addToCart = (product) => {
-    console.log('Adding product to cart:', product); // Add logging
+    console.log('🔄 addToCart called with:', product);
     if (!product || typeof product !== 'object') {
-      console.error('Invalid product:', product);
+      console.error('❌ Invalid product:', product);
+      return;
+    }
+    if (!product.id) {
+      console.error('❌ Product missing ID:', product);
+      return;
+    }
+    if (product.price === undefined || product.price === null) {
+      console.error('❌ Product missing price:', product);
       return;
     }
     dispatch({ type: 'ADD_ITEM', payload: product });
   };
 
   const removeFromCart = (productId) => {
+    console.log('🗑️ removeFromCart called with ID:', productId);
     dispatch({ type: 'REMOVE_ITEM', payload: { id: productId } });
   };
 
   const updateQuantity = (productId, quantity) => {
+    console.log('🔢 updateQuantity called:', { productId, quantity });
     if (quantity < 1) {
       removeFromCart(productId);
       return;
@@ -108,14 +131,21 @@ export const CartProvider = ({ children }) => {
   };
 
   const clearCart = () => {
+    console.log('🧹 clearCart called');
     dispatch({ type: 'CLEAR_CART' });
   };
 
   // Safe calculation of total with fallbacks
   const cartTotal = state.items.reduce(
-    (total, item) => total + ((item.price || 0) * (item.quantity || 0)),
+    (total, item) => {
+      const itemTotal = (item.price || 0) * (item.quantity || 0);
+      console.log(`💰 Item ${item.id}: £${item.price} x ${item.quantity} = £${itemTotal}`);
+      return total + itemTotal;
+    },
     0
   );
+
+  const itemCount = state.items.reduce((count, item) => count + (item.quantity || 0), 0);
 
   const cartValues = {
     items: state.items,
@@ -124,10 +154,14 @@ export const CartProvider = ({ children }) => {
     updateQuantity,
     clearCart,
     cartTotal,
-    itemCount: state.items.reduce((count, item) => count + (item.quantity || 0), 0),
+    itemCount,
   };
   
-  console.log('Cart state:', cartValues); // Log the current cart state
+  console.log('🛒 Current cart state:');
+  console.log('   📦 Items:', state.items.length);
+  console.log('   🔢 Total items:', itemCount);
+  console.log('   💰 Total price:', cartTotal);
+  console.log('   📋 Full items:', state.items);
 
   return (
     <CartContext.Provider value={cartValues}>
@@ -139,13 +173,13 @@ export const CartProvider = ({ children }) => {
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {
-    console.error('useCart must be used within a CartProvider'); // Better than throwing error
+    console.error('❌ useCart must be used within a CartProvider');
     return {
       items: [],
-      addToCart: () => {},
-      removeFromCart: () => {},
-      updateQuantity: () => {},
-      clearCart: () => {},
+      addToCart: () => console.log('🚫 No cart context - addToCart called'),
+      removeFromCart: () => console.log('🚫 No cart context - removeFromCart called'),
+      updateQuantity: () => console.log('🚫 No cart context - updateQuantity called'),
+      clearCart: () => console.log('🚫 No cart context - clearCart called'),
       cartTotal: 0,
       itemCount: 0
     };
