@@ -139,12 +139,3 @@ For custom orders or issues, email: [hello@argiescakes.com](mailto:hello@argiesc
 MIT © 2025 Argies Cakes
 
 ```
-
----
-
-Would you like me to:
-
-- Save this as a `README.md` file in your project directory?
-- Include sample `menu.json` or `.env.example` as well?
-
-Let me know and I’ll generate them instantly.
