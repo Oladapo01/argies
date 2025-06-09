@@ -1,8 +1,9 @@
-import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, Link, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaCheckCircle, FaHome, FaList } from 'react-icons/fa';
 import { useTheme } from 'styled-components';
+import axios from 'axios';
 
 const SuccessContainer = styled.div`
   max-width: 800px;
@@ -79,9 +80,50 @@ const Button = styled(Link)`
 
 const OrderSuccessPage = () => {
   const location = useLocation();
-  const { orderId, orderDetails } = location.state || {};
+  const [searchParams] = useSearchParams();
+  const { orderId: navOrderId, orderDetails: navOrderDetails } = location.state || {};
+  const [loading, setLoading] = useState(false);
+  const [orderId, setOrderId] = useState(navOrderId);
+  const [orderDetails, setOrderDetails] = useState(navOrderDetails);
   const theme = useTheme();
-  
+
+  // If landing from SumUp redirect, fetch by order_ref
+  useEffect(() => {
+    const orderRef = searchParams.get('order_ref');
+    if (!navOrderId && orderRef) {
+      setLoading(true);
+      axios.get(`/api/orders/${orderRef}`)
+        .then(res => {
+          if (res.data.success && res.data.data) {
+            setOrderId(orderRef);
+            setOrderDetails({
+              name: res.data.data.customer?.name,
+              email: res.data.data.customer?.email,
+              phone: res.data.data.customer?.phone,
+              deliveryOption: res.data.data.delivery?.method,
+              pickupDate: res.data.data.delivery?.date,
+              pickupTime: res.data.data.delivery?.time,
+              deliveryAddress: res.data.data.delivery?.address,
+              paymentMethod: res.data.data.payment?.method,
+              specialInstructions: res.data.data.specialInstructions,
+              items: res.data.data.items,
+              total: res.data.data.total
+            });
+          }
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [navOrderId, searchParams]);
+
+  if (loading) {
+    return (
+      <SuccessContainer>
+        <Title>Loading order...</Title>
+        <p>Please wait.</p>
+      </SuccessContainer>
+    );
+  }
+
   if (!orderId) {
     return (
       <SuccessContainer>

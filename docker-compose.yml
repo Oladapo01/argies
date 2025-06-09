@@ -21,6 +21,17 @@ services:
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
       - BUSINESS_EMAIL=${BUSINESS_EMAIL}
+      - FRONTEND_URL=${FRONTEND_URL}
+      # PayPal Configuration
+      - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
+      - PAYPAL_CLIENT_SECRET=${PAYPAL_CLIENT_SECRET}
+      # SumUp Configuration
+      - SUMUP_ACCESS_TOKEN=${SUMUP_ACCESS_TOKEN}
+      - SUMUP_EMAIL=${SUMUP_EMAIL}
+      - SUMUP_RETURN_URL=${SUMUP_RETURN_URL}
+      # Google Reviews Configuration
+      - GOOGLE_PLACES_API_KEY=${GOOGLE_PLACES_API_KEY}
+      - GOOGLE_PLACE_ID=${GOOGLE_PLACE_ID}
     depends_on:
       mongo:
         condition: service_healthy

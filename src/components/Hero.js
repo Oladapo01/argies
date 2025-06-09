@@ -55,7 +55,7 @@ const Hero = () => {
       <Container>
         <Row className="justify-content-center">
           <Col lg={10} xl={8}>
-            <HeroTitle>Delicious Artisan Cakes</HeroTitle>
+            <HeroTitle>Delicious Artisan Bakery</HeroTitle>
             <HeroSubtitle>
               Handcrafted with love using the finest ingredients for your special occasions
             </HeroSubtitle>

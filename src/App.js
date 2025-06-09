@@ -1,9 +1,6 @@
 import React, { useRef } from 'react';
 import { ThemeProvider } from 'styled-components';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import Menu from './components/Menu';
@@ -16,9 +13,7 @@ import CheckoutForm from './components/CheckoutForm';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import theme from './styles/theme';
 import { GlobalStyles } from './styles/global';
-
-// Initialize Stripe
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
+import BookingForm from './components/BookingForm';
 
 function App() {
   // Refs for smooth scrolling
@@ -69,16 +64,8 @@ function App() {
       <ThemeProvider theme={theme}>
         <GlobalStyles />
         <Routes>
-          <Route path="/" element={
-            <Elements stripe={stripePromise}>
-              <HomePage />
-            </Elements>
-          } />
-          <Route path="/checkout" element={
-            <Elements stripe={stripePromise}>
-              <CheckoutForm />
-            </Elements>
-          } />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/checkout" element={<CheckoutForm />} />
           <Route path="/order-success" element={<OrderSuccessPage />} />
         </Routes>
       </ThemeProvider>

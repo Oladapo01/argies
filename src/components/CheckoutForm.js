@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useCart } from '../context/CartContext';
 import { useTheme } from 'styled-components';
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from 'axios';
-import { CHECKOUT_URL } from '../utils/apiConfig';
+import PayPalCheckout from './PayPalCheckout'; // Import PayPal component
 
 const CheckoutContainer = styled.div`
   max-width: 800px;
@@ -26,6 +25,16 @@ const FormGroup = styled.div`
   margin-bottom: 1.5rem;
 `;
 
+const FormRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
 const Label = styled.label`
   display: block;
   margin-bottom: 0.5rem;
@@ -37,7 +46,6 @@ const Input = styled.input`
   padding: 0.75rem;
   border: 1px solid #eee;
   border-radius: 4px;
-  
   &:focus {
     outline: none;
     border-color: ${({ theme }) => theme.colors.primary};
@@ -50,7 +58,6 @@ const TextArea = styled.textarea`
   border: 1px solid #eee;
   border-radius: 4px;
   min-height: 100px;
-  
   &:focus {
     outline: none;
     border-color: ${({ theme }) => theme.colors.primary};
@@ -66,7 +73,6 @@ const Select = styled.select`
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23999' viewBox='0 0 16 16'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>");
   background-repeat: no-repeat;
   background-position: right 1rem center;
-  
   &:focus {
     outline: none;
     border-color: ${({ theme }) => theme.colors.primary};
@@ -82,47 +88,80 @@ const RadioLabel = styled.label`
   display: flex;
   align-items: center;
   cursor: pointer;
-  
   input {
     margin-right: 0.5rem;
   }
 `;
 
-const CardElementContainer = styled.div`
-  border: 1px solid #eee;
-  border-radius: 4px;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
+// Payment Method Styles
+const PaymentSection = styled.div`
+  margin-bottom: 1.5rem;
 `;
+
+const PaymentTitle = styled.h3`
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+const PaymentOptions = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+const PaymentOption = styled.label`
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary};
+    background-color: #f8f9fa;
+  }
+  
+  input[type="radio"] {
+    margin-right: 1rem;
+    transform: scale(1.2);
+  }
+`;
+
+const PaymentMethodName = styled.span`
+  font-size: 1rem;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+
 
 const OrderSummary = styled.div`
   margin: 2rem 0;
   padding: 1rem;
   background: #f9f9f9;
   border-radius: 4px;
-  
   h3 {
     margin-bottom: 1rem;
     color: ${({ theme }) => theme.colors.primary};
   }
-  
   ul {
     list-style: none;
     padding: 0;
     margin-bottom: 1rem;
-    
     li {
       display: flex;
       justify-content: space-between;
       padding: 0.5rem 0;
       border-bottom: 1px solid #eee;
-      
       &:last-child {
         border-bottom: none;
       }
     }
   }
-  
   .total {
     display: flex;
     justify-content: space-between;
@@ -131,6 +170,8 @@ const OrderSummary = styled.div`
     border-top: 1px solid #ddd;
   }
 `;
+
+
 
 const ButtonRow = styled.div`
   display: flex;
@@ -147,12 +188,10 @@ const Button = styled.button`
   cursor: pointer;
   font-weight: 500;
   transition: all 0.3s ease;
-  
   &:hover {
     background: ${({ primary, theme }) => primary ? theme.colors.accent : '#e9ecef'};
     transform: translateY(-2px);
   }
-  
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -160,7 +199,6 @@ const Button = styled.button`
   }
 `;
 
-// Generate time slots from 9am to 7pm
 const generateTimeSlots = () => {
   const slots = [];
   for (let hour = 9; hour <= 19; hour++) {
@@ -176,11 +214,8 @@ const generateTimeSlots = () => {
 
 const CheckoutForm = () => {
   const { items, cartTotal, clearCart } = useCart();
-  const stripe = useStripe();
-  const elements = useElements();
   const navigate = useNavigate();
   const theme = useTheme();
-  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -190,121 +225,62 @@ const CheckoutForm = () => {
     pickupTime: '',
     deliveryAddress: '',
     specialInstructions: '',
-    paymentMethod: 'card'
+    paymentMethod: 'paypal' // Changed default to paypal
   });
-  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+  const [agreedToDisclaimer, setAgreedToDisclaimer] = useState(false);
+  const [showPayPal, setShowPayPal] = useState(false);
   const timeSlots = generateTimeSlots();
-  
+
   // Get tomorrow's date as minimum date for pickup
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDate = tomorrow.toISOString().split('T')[0];
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
     
+    // Show PayPal buttons when PayPal is selected
+    if (name === 'paymentMethod') {
+      setShowPayPal(value === 'paypal');
+    }
+  };
+
+  // PayPal Success Handler
+  const handlePayPalSuccess = async (details) => {
     try {
-      // Required field validation
-      if (!formData.name || !formData.email || !formData.phone || !formData.pickupDate || !formData.pickupTime) {
-        throw new Error('Please fill in all required fields');
-      }
+      setLoading(true);
       
-      if (formData.deliveryOption === 'delivery' && !formData.deliveryAddress) {
-        throw new Error('Please provide a delivery address');
-      }
-      
-      // Process payment based on method
-      let paymentResult = { success: false };
-      
-      if (formData.paymentMethod === 'card') {
-        if (!stripe || !elements) {
-          throw new Error('Stripe has not loaded yet. Please try again.');
-        }
-        
-        const cardElement = elements.getElement(CardElement);
-        if (!cardElement) {
-          throw new Error('Card information is required');
-        }
-        
-        // Create payment method
-        const { error, paymentMethod } = await stripe.createPaymentMethod({
-          type: 'card',
-          card: cardElement,
-          billing_details: {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone
-          }
-        });
-        
-        if (error) {
-          throw new Error(error.message);
-        }
-        
-        // Send to backend
-        const response = await axios.post(CHECKOUT_URL, {
-          items,
-          total: cartTotal,
-          customer: {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone
-          },
-          delivery: {
-            method: formData.deliveryOption,
-            address: formData.deliveryAddress,
-            date: formData.pickupDate,
-            time: formData.pickupTime
-          },
-          payment: {
-            method: 'card',
-            paymentMethodId: paymentMethod.id
-          },
-          specialInstructions: formData.specialInstructions
-        });
-        
-        paymentResult = response.data;
-      } else {
-        // Cash payment - just create the order
-        const response = await axios.post(CHECKOUT_URL, {
-          items,
-          total: cartTotal,
-          customer: {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone
-          },
-          delivery: {
-            method: formData.deliveryOption,
-            address: formData.deliveryAddress,
-            date: formData.pickupDate,
-            time: formData.pickupTime
-          },
-          payment: {
-            method: 'cash'
-          },
-          specialInstructions: formData.specialInstructions
-        });
-        
-        paymentResult = response.data;
-      }
-      
-      if (paymentResult.success) {
-        // Clear cart and redirect to success page
+      // Send order with PayPal transaction details to your existing endpoint
+      const response = await axios.post('/api/orders/checkout', {
+        items,
+        total: cartTotal,
+        customer: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone
+        },
+        delivery: {
+          method: formData.deliveryOption,
+          address: formData.deliveryAddress,
+          date: formData.pickupDate,
+          time: formData.pickupTime
+        },
+        payment: { 
+          method: 'paypal'
+        },
+        specialInstructions: formData.specialInstructions,
+        paypalOrderId: details.id // Send PayPal order ID for verification
+      });
+
+      if (response.data.success) {
         clearCart();
         navigate('/order-success', { 
           state: { 
-            orderId: paymentResult.orderId,
+            orderId: response.data.orderId,
+            paypalTransactionId: details.id,
             orderDetails: {
               ...formData,
               items,
@@ -313,20 +289,127 @@ const CheckoutForm = () => {
           } 
         });
       } else {
-        throw new Error(paymentResult.message || 'Order processing failed');
+        throw new Error(response.data.message || 'Order processing failed');
+      }
+    } catch (err) {
+      console.error('PayPal order processing error:', err);
+      setError('Failed to process PayPal payment. Please try again.');
+    }
+    setLoading(false);
+  };
+
+  // PayPal Error Handler
+  const handlePayPalError = (error) => {
+    console.error('PayPal error:', error);
+    setError('PayPal payment failed. Please try again or choose a different payment method.');
+  };
+
+  // PayPal Cancel Handler
+  const handlePayPalCancel = (data) => {
+    console.log('PayPal payment cancelled:', data);
+    setError('PayPal payment was cancelled. Please try again.');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    // Validation
+    if (!formData.name || !formData.email || !formData.phone || !formData.pickupDate || !formData.pickupTime) {
+      setError('Please fill in all required fields');
+      return;
+    }
+    if (formData.deliveryOption === 'delivery' && !formData.deliveryAddress) {
+      setError('Please provide a delivery address');
+      return;
+    }
+    if (!agreedToDisclaimer) {
+      setError("You must agree to the Cake Transport Disclaimer before placing the order.");
+      return;
+    }
+
+    // For PayPal, show PayPal buttons instead of processing immediately
+    if (formData.paymentMethod === 'paypal') {
+      setShowPayPal(true);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Send order to backend based on payment method
+      if (formData.paymentMethod === 'sumup') {
+        const response = await axios.post('/api/orders/checkout', {
+          items,
+          total: cartTotal,
+          customer: {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone
+          },
+          delivery: {
+            method: formData.deliveryOption,
+            address: formData.deliveryAddress,
+            date: formData.pickupDate,
+            time: formData.pickupTime
+          },
+          payment: { method: 'sumup' },
+          specialInstructions: formData.specialInstructions
+        });
+        
+        if (response.data.checkout_url) {
+          window.location.href = response.data.checkout_url;
+        } else {
+          throw new Error('No checkout URL received from SumUp');
+        }
+        setLoading(false);
+        return;
+      } else {
+        // Cash payment, just create the order
+        const response = await axios.post('/api/orders/checkout', {
+          items,
+          total: cartTotal,
+          customer: {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone
+          },
+          delivery: {
+            method: formData.deliveryOption,
+            address: formData.deliveryAddress,
+            date: formData.pickupDate,
+            time: formData.pickupTime
+          },
+          payment: { method: 'cash' },
+          specialInstructions: formData.specialInstructions
+        });
+        if (response.data.success) {
+          clearCart();
+          navigate('/order-success', { 
+            state: { 
+              orderId: response.data.orderId,
+              orderDetails: {
+                ...formData,
+                items,
+                total: cartTotal
+              }
+            } 
+          });
+        } else {
+          throw new Error(response.data.message || 'Order processing failed');
+        }
       }
     } catch (err) {
       console.error('Checkout error:', err);
       setError(err.message || 'Something went wrong. Please try again.');
     }
-    
+
     setLoading(false);
   };
-  
+
   return (
     <CheckoutContainer>
       <Title>Checkout</Title>
-      
       <OrderSummary>
         <h3>Order Summary</h3>
         <ul>
@@ -342,32 +425,33 @@ const CheckoutForm = () => {
           <span>£{cartTotal.toFixed(2)}</span>
         </div>
       </OrderSummary>
-      
+
       <form onSubmit={handleSubmit}>
-        <FormGroup>
-          <Label htmlFor="name">Full Name *</Label>
-          <Input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </FormGroup>
-        
-        <FormGroup>
-          <Label htmlFor="email">Email Address *</Label>
-          <Input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </FormGroup>
-        
+        <FormRow>
+          <FormGroup>
+            <Label htmlFor="name">Full Name *</Label>
+            <Input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="email">Email Address *</Label>
+            <Input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+        </FormRow>
+
         <FormGroup>
           <Label htmlFor="phone">Phone Number *</Label>
           <Input
@@ -379,7 +463,7 @@ const CheckoutForm = () => {
             required
           />
         </FormGroup>
-        
+
         <FormGroup>
           <Label>Delivery Option *</Label>
           <RadioGroup>
@@ -405,7 +489,7 @@ const CheckoutForm = () => {
             </RadioLabel>
           </RadioGroup>
         </FormGroup>
-        
+
         {formData.deliveryOption === 'delivery' && (
           <FormGroup>
             <Label htmlFor="deliveryAddress">Delivery Address *</Label>
@@ -419,40 +503,41 @@ const CheckoutForm = () => {
             />
           </FormGroup>
         )}
-        
-        <FormGroup>
-          <Label htmlFor="pickupDate">
-            {formData.deliveryOption === 'pickup' ? 'Pickup Date *' : 'Delivery Date *'}
-          </Label>
-          <Input
-            type="date"
-            id="pickupDate"
-            name="pickupDate"
-            value={formData.pickupDate}
-            onChange={handleChange}
-            min={minDate}
-            required
-          />
-        </FormGroup>
-        
-        <FormGroup>
-          <Label htmlFor="pickupTime">
-            {formData.deliveryOption === 'pickup' ? 'Pickup Time *' : 'Delivery Time *'}
-          </Label>
-          <Select
-            id="pickupTime"
-            name="pickupTime"
-            value={formData.pickupTime}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select a time</option>
-            {timeSlots.map(slot => (
-              <option key={slot} value={slot}>{slot}</option>
-            ))}
-          </Select>
-        </FormGroup>
-        
+
+        <FormRow>
+          <FormGroup>
+            <Label htmlFor="pickupDate">
+              {formData.deliveryOption === 'pickup' ? 'Pickup Date *' : 'Delivery Date *'}
+            </Label>
+            <Input
+              type="date"
+              id="pickupDate"
+              name="pickupDate"
+              value={formData.pickupDate}
+              onChange={handleChange}
+              min={minDate}
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="pickupTime">
+              {formData.deliveryOption === 'pickup' ? 'Pickup Time *' : 'Delivery Time *'}
+            </Label>
+            <Select
+              id="pickupTime"
+              name="pickupTime"
+              value={formData.pickupTime}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select a time</option>
+              {timeSlots.map(slot => (
+                <option key={slot} value={slot}>{slot}</option>
+              ))}
+            </Select>
+          </FormGroup>
+        </FormRow>
+
         <FormGroup>
           <Label htmlFor="specialInstructions">Special Instructions</Label>
           <TextArea
@@ -463,21 +548,33 @@ const CheckoutForm = () => {
             placeholder="Any special requirements for your cake? Size adjustments, allergies, special messages, etc."
           />
         </FormGroup>
-        
-        <FormGroup>
-          <Label>Payment Method *</Label>
-          <RadioGroup>
-            <RadioLabel>
+
+        <PaymentSection>
+          <PaymentTitle>Pay with</PaymentTitle>
+          <PaymentOptions>
+            <PaymentOption>
               <input
                 type="radio"
                 name="paymentMethod"
-                value="card"
-                checked={formData.paymentMethod === 'card'}
+                value="paypal"
+                checked={formData.paymentMethod === 'paypal'}
                 onChange={handleChange}
               />
-              Pay with Card
-            </RadioLabel>
-            <RadioLabel>
+              <PaymentMethodName>PayPal</PaymentMethodName>
+            </PaymentOption>
+            
+            <PaymentOption>
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="sumup"
+                checked={formData.paymentMethod === 'sumup'}
+                onChange={handleChange}
+              />
+              <PaymentMethodName>Pay with Card (SumUp)</PaymentMethodName>
+            </PaymentOption>
+            
+            <PaymentOption>
               <input
                 type="radio"
                 name="paymentMethod"
@@ -485,41 +582,46 @@ const CheckoutForm = () => {
                 checked={formData.paymentMethod === 'cash'}
                 onChange={handleChange}
               />
-              Pay with Cash ({formData.deliveryOption === 'pickup' ? 'at pickup' : 'on delivery'})
-            </RadioLabel>
-          </RadioGroup>
-        </FormGroup>
-        
-        {formData.paymentMethod === 'card' && (
-          <FormGroup>
-            <Label htmlFor="card-element">Credit or Debit Card *</Label>
-            <CardElementContainer>
-              <CardElement
-                options={{
-                  style: {
-                    base: {
-                      fontSize: '16px',
-                      fontFamily: 'Arial, sans-serif',
-                      '::placeholder': {
-                        color: '#aab7c4'
-                      }
-                    },
-                    invalid: {
-                      color: '#e5424d'
-                    }
-                  }
-                }}
-              />
-            </CardElementContainer>
-          </FormGroup>
-        )}
-        
+              <PaymentMethodName>Pay with Cash ({formData.deliveryOption === 'pickup' ? 'at pickup' : 'on delivery'})</PaymentMethodName>
+            </PaymentOption>
+          </PaymentOptions>
+        </PaymentSection>
+
         {error && (
           <FormGroup>
             <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>
           </FormGroup>
         )}
-        
+
+        {/* PayPal Checkout Component */}
+        {showPayPal && formData.paymentMethod === 'paypal' && (
+          <FormGroup>
+            <PayPalCheckout
+              amount={cartTotal}
+              currency="GBP"
+              onSuccess={handlePayPalSuccess}
+              onError={handlePayPalError}
+              onCancel={handlePayPalCancel}
+            />
+          </FormGroup>
+        )}
+
+        <FormGroup>
+          <RadioLabel style={{ alignItems: 'flex-start' }}>
+            <input
+              type="checkbox"
+              checked={agreedToDisclaimer}
+              onChange={(e) => setAgreedToDisclaimer(e.target.checked)}
+              required
+              style={{ marginTop: '0.3rem' }}
+            />
+            <span>
+              <strong>Cake Transport Disclaimer:</strong><br />
+              I acknowledge that once the cake has been picked, I accept full responsibility for its handling and transport. I understand that <strong>Argies</strong> is not liable for any damages that may occur during transit.
+            </span>
+          </RadioLabel>
+        </FormGroup>
+
         <ButtonRow>
           <Button 
             type="button" 
@@ -531,9 +633,12 @@ const CheckoutForm = () => {
           <Button 
             type="submit" 
             primary 
-            disabled={loading}
+            disabled={loading || (formData.paymentMethod === 'paypal' && showPayPal)}
           >
-            {loading ? 'Processing...' : 'Place Order'}
+            {loading ? 'Processing...' : 
+             formData.paymentMethod === 'paypal' && !showPayPal ? 'Continue to PayPal' :
+             formData.paymentMethod === 'paypal' && showPayPal ? 'Complete PayPal Payment Above' :
+             'Confirm and Pay'}
           </Button>
         </ButtonRow>
       </form>
